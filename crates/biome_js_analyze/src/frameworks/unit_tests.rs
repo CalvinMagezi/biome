@@ -1,4 +1,42 @@
-use biome_js_syntax::{AnyJsExpression, AnyJsName, JsCallExpression};
+use biome_js_syntax::{AnyJsExpression, AnyJsName, JsCallExpression, JsStaticMemberExpression};
+
+fn static_member_has_name(member: &JsStaticMemberExpression, expected: &str) -> bool {
+    member
+        .member()
+        .ok()
+        .and_then(|member| match member {
+            AnyJsName::JsName(name) => name.value_token().ok(),
+            _ => None,
+        })
+        .is_some_and(|token| token.text_trimmed() == expected)
+}
+
+fn expression_is_known_test_root(expr: AnyJsExpression) -> bool {
+    match expr.omit_parentheses() {
+        AnyJsExpression::JsIdentifierExpression(ident) => ident
+            .name()
+            .and_then(|name| name.value_token())
+            .is_ok_and(|token| matches!(token.text_trimmed(), "test" | "it" | "describe")),
+        _ => false,
+    }
+}
+
+fn expression_is_describe_target(expr: AnyJsExpression) -> bool {
+    match expr.omit_parentheses() {
+        AnyJsExpression::JsIdentifierExpression(ident) => ident
+            .name()
+            .and_then(|name| name.value_token())
+            .is_ok_and(|token| token.text_trimmed() == "describe"),
+        AnyJsExpression::JsStaticMemberExpression(member) => {
+            static_member_has_name(&member, "describe")
+                && member
+                    .object()
+                    .ok()
+                    .is_some_and(expression_is_known_test_root)
+        }
+        _ => false,
+    }
+}
 
 /// Returns `true` if the call expression is a test case call:
 /// `it(...)`, `test(...)`, and their variants with modifiers
@@ -10,7 +48,16 @@ pub(crate) fn is_unit_test(call: &JsCallExpression) -> bool {
     let Ok(callee) = call.callee() else {
         return false;
     };
-    if !callee.contains_a_test_pattern() {
+    let is_test_pattern = callee.contains_a_test_pattern()
+        || matches!(
+            callee.omit_parentheses(),
+            AnyJsExpression::JsCallExpression(each_call)
+                if each_call
+                    .callee()
+                    .ok()
+                    .is_some_and(|callee| callee.contains_a_test_each_pattern())
+        );
+    if !is_test_pattern {
         return false;
     }
     // Exclude describe blocks — we want only leaf test cases
@@ -39,39 +86,39 @@ pub(crate) fn is_describe_call(call: &JsCallExpression) -> bool {
 
         // test.describe(...) / it.describe(...) / describe.each(...) etc.
         AnyJsExpression::JsStaticMemberExpression(member) => {
-            // The right-hand member must be "describe".
-            let member_is_describe = member
-                .member()
-                .ok()
-                .and_then(|m| {
-                    if let AnyJsName::JsName(n) = m {
-                        Some(n)
-                    } else {
-                        None
-                    }
-                })
-                .and_then(|n| n.value_token().ok())
-                .is_some_and(|tok| tok.text_trimmed() == "describe");
+            // Accept `*.describe(...)` and `*.describe.each(...)`.
+            let member_is_describe = static_member_has_name(&member, "describe")
+                || (static_member_has_name(&member, "each")
+                    && member
+                        .object()
+                        .ok()
+                        .is_some_and(expression_is_describe_target));
 
             if !member_is_describe {
                 return false;
             }
 
-            // The left-hand object must be a known test root identifier.
             member
                 .object()
                 .ok()
-                .map(|o| o.omit_parentheses())
-                .and_then(|o| {
-                    if let AnyJsExpression::JsIdentifierExpression(i) = o {
-                        Some(i)
-                    } else {
-                        None
-                    }
-                })
-                .and_then(|i| i.name().and_then(|r| r.value_token()).ok())
-                .is_some_and(|tok| matches!(tok.text_trimmed(), "test" | "it" | "describe"))
+                .is_some_and(expression_is_known_test_root)
         }
+
+        AnyJsExpression::JsCallExpression(call) => call
+            .callee()
+            .ok()
+            .map(|callee| callee.omit_parentheses())
+            .and_then(|callee| match callee {
+                AnyJsExpression::JsStaticMemberExpression(member) => Some(member),
+                _ => None,
+            })
+            .is_some_and(|member| {
+                static_member_has_name(&member, "each")
+                    && member
+                        .object()
+                        .ok()
+                        .is_some_and(expression_is_describe_target)
+            }),
 
         _ => false,
     }
@@ -132,6 +179,20 @@ mod tests {
     fn describe_describe_member() {
         assert!(is_describe_call(&first_call(
             "describe.describe('suite', () => {})"
+        )));
+    }
+
+    #[test]
+    fn describe_each_member() {
+        assert!(is_describe_call(&first_call(
+            "describe.each([])('suite', () => {})"
+        )));
+    }
+
+    #[test]
+    fn test_describe_each_member() {
+        assert!(is_describe_call(&first_call(
+            "test.describe.each([])('suite', () => {})"
         )));
     }
 
@@ -205,6 +266,20 @@ mod tests {
     }
 
     #[test]
+    fn it_each_is_unit_test() {
+        assert!(is_unit_test(&first_call(
+            "it.each([])('does something', () => {})"
+        )));
+    }
+
+    #[test]
+    fn test_each_is_unit_test() {
+        assert!(is_unit_test(&first_call(
+            "test.each([])('does something', () => {})"
+        )));
+    }
+
+    #[test]
     fn describe_is_not_unit_test() {
         assert!(!is_unit_test(&first_call("describe('suite', () => {})")));
     }
@@ -213,6 +288,13 @@ mod tests {
     fn test_describe_is_not_unit_test() {
         assert!(!is_unit_test(&first_call(
             "test.describe('suite', () => {})"
+        )));
+    }
+
+    #[test]
+    fn describe_each_is_not_unit_test() {
+        assert!(!is_unit_test(&first_call(
+            "describe.each([])('suite', () => {})"
         )));
     }
 
