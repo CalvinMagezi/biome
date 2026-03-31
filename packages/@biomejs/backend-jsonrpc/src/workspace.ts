@@ -2277,6 +2277,11 @@ See https://biomejs.dev/linter/rules/no-redundant-default-export
 	 */
 	noRedundantDefaultExport?: NoRedundantDefaultExportConfiguration;
 	/**
+	* Succinct description of the rule.
+See https://biomejs.dev/linter/rules/no-redundant-type-arguments 
+	 */
+	noRedundantTypeArguments?: NoRedundantTypeArgumentsConfiguration;
+	/**
 	* Disallow assignments in return statements.
 See https://biomejs.dev/linter/rules/no-return-assign 
 	 */
@@ -4257,6 +4262,9 @@ export type NoProtoConfiguration =
 export type NoRedundantDefaultExportConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoRedundantDefaultExportOptions;
+export type NoRedundantTypeArgumentsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithNoRedundantTypeArgumentsOptions;
 export type NoReturnAssignConfiguration =
 	| RulePlainConfiguration
 	| RuleWithNoReturnAssignOptions;
@@ -5973,6 +5981,10 @@ export interface RuleWithNoRedundantDefaultExportOptions {
 	level: RulePlainConfiguration;
 	options?: NoRedundantDefaultExportOptions;
 }
+export interface RuleWithNoRedundantTypeArgumentsOptions {
+	level: RulePlainConfiguration;
+	options?: NoRedundantTypeArgumentsOptions;
+}
 export interface RuleWithNoReturnAssignOptions {
 	level: RulePlainConfiguration;
 	options?: NoReturnAssignOptions;
@@ -7520,6 +7532,7 @@ export type NoPlaywrightWaitForSelectorOptions = {};
 export type NoPlaywrightWaitForTimeoutOptions = {};
 export type NoProtoOptions = {};
 export type NoRedundantDefaultExportOptions = {};
+export type NoRedundantTypeArgumentsOptions = {};
 export type NoReturnAssignOptions = {};
 export interface NoRootTypeOptions {
 	/**
@@ -8632,6 +8645,7 @@ export type Category =
 	| "lint/nursery/noPlaywrightWaitForTimeout"
 	| "lint/nursery/noProto"
 	| "lint/nursery/noRedundantDefaultExport"
+	| "lint/nursery/noRedundantTypeArguments"
 	| "lint/nursery/noReturnAssign"
 	| "lint/nursery/noRootType"
 	| "lint/nursery/noScriptUrl"
