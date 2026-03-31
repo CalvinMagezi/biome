@@ -2277,7 +2277,7 @@ See https://biomejs.dev/linter/rules/no-redundant-default-export
 	 */
 	noRedundantDefaultExport?: NoRedundantDefaultExportConfiguration;
 	/**
-	* Succinct description of the rule.
+	* Disallow explicit type arguments that match a declaration's default type or can be inferred.
 See https://biomejs.dev/linter/rules/no-redundant-type-arguments 
 	 */
 	noRedundantTypeArguments?: NoRedundantTypeArgumentsConfiguration;
@@ -5982,6 +5982,7 @@ export interface RuleWithNoRedundantDefaultExportOptions {
 	options?: NoRedundantDefaultExportOptions;
 }
 export interface RuleWithNoRedundantTypeArgumentsOptions {
+	fix?: FixKind;
 	level: RulePlainConfiguration;
 	options?: NoRedundantTypeArgumentsOptions;
 }
