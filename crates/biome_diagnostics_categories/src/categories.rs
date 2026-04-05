@@ -206,6 +206,7 @@ define_categories! {
     "lint/nursery/noInlineStyles": "https://biomejs.dev/linter/rules/no-inline-styles",
     "lint/nursery/noJsxPropsBind": "https://biomejs.dev/linter/rules/no-jsx-props-bind",
     "lint/nursery/noLeakedRender": "https://biomejs.dev/linter/rules/no-leaked-render",
+    "lint/nursery/noLoopFunc": "https://biomejs.dev/linter/rules/no-loop-func",
     "lint/nursery/noMissingGenericFamilyKeyword": "https://biomejs.dev/linter/rules/no-missing-generic-family-keyword",
     "lint/nursery/noMisusedPromises": "https://biomejs.dev/linter/rules/no-misused-promises",
     "lint/nursery/noMultiAssign": "https://biomejs.dev/linter/rules/no-multi-assign",
