@@ -24,6 +24,7 @@ mod overrides;
 pub mod vcs;
 
 use crate::analyzer::assist::{Actions, AssistConfiguration, Source, assist_configuration};
+use crate::analyzer::presets::PresetConfig;
 use crate::analyzer::{RuleAssistConfiguration, RuleDomains};
 use crate::bool::Bool;
 use crate::css::{CssFormatterConfiguration, CssLinterConfiguration, CssParserConfiguration};
@@ -241,7 +242,7 @@ impl Configuration {
             linter: Some(LinterConfiguration {
                 enabled: Some(true.into()),
                 rules: Some(Rules {
-                    recommended: Some(true),
+                    preset: Some(PresetConfig::default()),
                     ..Default::default()
                 }),
                 ..Default::default()
