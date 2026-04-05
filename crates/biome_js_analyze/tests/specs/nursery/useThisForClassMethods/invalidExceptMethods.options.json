@@ -1,0 +1,14 @@
+{
+  "linter": {
+    "rules": {
+      "nursery": {
+        "useThisForClassMethods": {
+          "level": "error",
+          "options": {
+            "exceptMethods": ["foo", "#bar"]
+          }
+        }
+      }
+    }
+  }
+}

@@ -2087,6 +2087,10 @@
 			},
 			"additionalProperties": false
 		},
+		"IgnoreClassesWithImplements": {
+			"type": "string",
+			"enum": ["all", "public-fields"]
+		},
 		"ImportGroup": {
 			"anyOf": [
 				{ "type": "null" },
@@ -6572,6 +6576,13 @@
 					"description": "Enforce the use of the spread operator over .apply().\nSee https://biomejs.dev/linter/rules/use-spread",
 					"anyOf": [
 						{ "$ref": "#/$defs/UseSpreadConfiguration" },
+						{ "type": "null" }
+					]
+				},
+				"useThisForClassMethods": {
+					"description": "Enforce that class methods utilize this.\nSee https://biomejs.dev/linter/rules/use-this-for-class-methods",
+					"anyOf": [
+						{ "$ref": "#/$defs/UseThisForClassMethodsConfiguration" },
 						{ "type": "null" }
 					]
 				},
@@ -11344,6 +11355,15 @@
 			"additionalProperties": false,
 			"required": ["level"]
 		},
+		"RuleWithUseThisForClassMethodsOptions": {
+			"type": "object",
+			"properties": {
+				"level": { "$ref": "#/$defs/RulePlainConfiguration" },
+				"options": { "$ref": "#/$defs/UseThisForClassMethodsOptions" }
+			},
+			"additionalProperties": false,
+			"required": ["level"]
+		},
 		"RuleWithUseThrowNewErrorOptions": {
 			"type": "object",
 			"properties": {
@@ -14806,6 +14826,29 @@
 			]
 		},
 		"UseTemplateOptions": { "type": "object", "additionalProperties": false },
+		"UseThisForClassMethodsConfiguration": {
+			"oneOf": [
+				{ "$ref": "#/$defs/RulePlainConfiguration" },
+				{ "$ref": "#/$defs/RuleWithUseThisForClassMethodsOptions" }
+			]
+		},
+		"UseThisForClassMethodsOptions": {
+			"type": "object",
+			"properties": {
+				"exceptMethods": {
+					"type": ["array", "null"],
+					"items": { "type": "string" }
+				},
+				"ignoreClassesWithImplements": {
+					"anyOf": [
+						{ "$ref": "#/$defs/IgnoreClassesWithImplements" },
+						{ "type": "null" }
+					]
+				},
+				"ignoreOverrideMethods": { "type": ["boolean", "null"] }
+			},
+			"additionalProperties": false
+		},
 		"UseThrowNewErrorConfiguration": {
 			"oneOf": [
 				{ "$ref": "#/$defs/RulePlainConfiguration" },

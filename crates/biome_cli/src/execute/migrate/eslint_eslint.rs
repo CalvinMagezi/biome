@@ -535,6 +535,11 @@ impl Deserializable for Rules {
                     };
                     match rule_name.text() {
                         // Eslint rules with options that we handle
+                        "class-methods-use-this" => {
+                            if let Some(conf) = RuleConf::deserialize(ctx, &value, name) {
+                                result.insert(Rule::ClassMethodsUseThis(conf));
+                            }
+                        }
                         "no-console" => {
                             if let Some(conf) = RuleConf::deserialize(ctx, &value, name) {
                                 result.insert(Rule::NoConsole(conf));
@@ -612,6 +617,56 @@ impl From<NoConsoleOptions> for biome_rule_options::no_console::NoConsoleOptions
     }
 }
 
+#[derive(Debug, Default, Deserializable)]
+#[deserializable(unknown_fields = "allow")]
+pub(crate) struct ClassMethodsUseThisOptions {
+    #[deserializable(rename = "exceptMethods")]
+    except_methods: Box<[Box<str>]>,
+    #[deserializable(rename = "enforceForClassFields")]
+    enforce_for_class_fields: Option<bool>,
+    #[deserializable(rename = "ignoreOverrideMethods")]
+    ignore_override_methods: Option<bool>,
+    #[deserializable(rename = "ignoreClassesWithImplements")]
+    ignore_classes_with_implements: Option<EslintIgnoreClassesWithImplements>,
+}
+impl ClassMethodsUseThisOptions {
+    pub(crate) fn into_biome_options(
+        self,
+    ) -> Option<biome_rule_options::use_this_for_class_methods::UseThisForClassMethodsOptions> {
+        let options =
+            biome_rule_options::use_this_for_class_methods::UseThisForClassMethodsOptions {
+                except_methods: (!self.except_methods.is_empty()).then_some(self.except_methods),
+                ignore_override_methods: self.ignore_override_methods,
+                ignore_classes_with_implements: self.ignore_classes_with_implements.map(Into::into),
+            };
+
+        let _ = self.enforce_for_class_fields;
+
+        (options.except_methods.is_some()
+            || options.ignore_override_methods.is_some()
+            || options.ignore_classes_with_implements.is_some())
+        .then_some(options)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Deserializable)]
+pub(crate) enum EslintIgnoreClassesWithImplements {
+    #[deserializable(rename = "all")]
+    All,
+    #[deserializable(rename = "public-fields")]
+    PublicFields,
+}
+impl From<EslintIgnoreClassesWithImplements>
+    for biome_rule_options::use_this_for_class_methods::IgnoreClassesWithImplements
+{
+    fn from(value: EslintIgnoreClassesWithImplements) -> Self {
+        match value {
+            EslintIgnoreClassesWithImplements::All => Self::All,
+            EslintIgnoreClassesWithImplements::PublicFields => Self::PublicFields,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub(crate) enum NoRestrictedGlobal {
     Plain(String),
@@ -657,6 +712,7 @@ pub(crate) enum Rule {
     Any(Cow<'static, str>, Severity),
     // Eslint rules with its options
     // We use this to configure equivalent Bione's rules.
+    ClassMethodsUseThis(RuleConf<ClassMethodsUseThisOptions>),
     NoConsole(RuleConf<Box<NoConsoleOptions>>),
     NoRestrictedGlobals(RuleConf<Box<NoRestrictedGlobal>>),
     // Eslint plugins
@@ -675,6 +731,7 @@ impl Rule {
     pub(crate) fn name(&self) -> Cow<'static, str> {
         match self {
             Self::Any(name, _) => name.clone(),
+            Self::ClassMethodsUseThis(_) => Cow::Borrowed("class-methods-use-this"),
             Self::NoConsole(_) => Cow::Borrowed("no-console"),
             Self::NoRestrictedGlobals(_) => Cow::Borrowed("no-restricted-globals"),
             Self::JestConsistentTestIt(_) => Cow::Borrowed("jest/consistent-test-it"),

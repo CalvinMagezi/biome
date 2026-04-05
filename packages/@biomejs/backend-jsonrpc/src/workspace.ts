@@ -2511,6 +2511,11 @@ See https://biomejs.dev/linter/rules/use-spread
 	 */
 	useSpread?: UseSpreadConfiguration;
 	/**
+	* Enforce that class methods utilize this.
+See https://biomejs.dev/linter/rules/use-this-for-class-methods 
+	 */
+	useThisForClassMethods?: UseThisForClassMethodsConfiguration;
+	/**
 	* Enforce the use of the u or v flag for regular expressions.
 See https://biomejs.dev/linter/rules/use-unicode-regex 
 	 */
@@ -4405,6 +4410,9 @@ export type UseSortedClassesConfiguration =
 export type UseSpreadConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseSpreadOptions;
+export type UseThisForClassMethodsConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseThisForClassMethodsOptions;
 export type UseUnicodeRegexConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseUnicodeRegexOptions;
@@ -6183,6 +6191,10 @@ export interface RuleWithUseSpreadOptions {
 	level: RulePlainConfiguration;
 	options?: UseSpreadOptions;
 }
+export interface RuleWithUseThisForClassMethodsOptions {
+	level: RulePlainConfiguration;
+	options?: UseThisForClassMethodsOptions;
+}
 export interface RuleWithUseUnicodeRegexOptions {
 	fix?: FixKind;
 	level: RulePlainConfiguration;
@@ -7739,6 +7751,11 @@ export interface UseSortedClassesOptions {
 	functions?: string[];
 }
 export type UseSpreadOptions = {};
+export interface UseThisForClassMethodsOptions {
+	exceptMethods?: string[];
+	ignoreClassesWithImplements?: IgnoreClassesWithImplements;
+	ignoreOverrideMethods?: boolean;
+}
 export type UseUnicodeRegexOptions = {};
 export interface UseVueConsistentDefinePropsDeclarationOptions {
 	style?: DeclarationStyle;
@@ -8243,6 +8260,7 @@ export type MethodSignatureStyle = "property" | "method";
  */
 export type TestFunctionKind = "it" | "test";
 export type CheckInputType = "off" | "loose" | "strict";
+export type IgnoreClassesWithImplements = "all" | "public-fields";
 export type DeclarationStyle = "type" | "runtime";
 export type VueDirectiveStyle = "shorthand" | "longhand";
 export type VueDirectiveStyle2 = "shorthand" | "longhand";
@@ -8733,6 +8751,7 @@ export type Category =
 	| "lint/nursery/useScopedStyles"
 	| "lint/nursery/useSortedClasses"
 	| "lint/nursery/useSpread"
+	| "lint/nursery/useThisForClassMethods"
 	| "lint/nursery/useUnicodeRegex"
 	| "lint/nursery/useUniqueArgumentNames"
 	| "lint/nursery/useUniqueFieldDefinitionNames"
