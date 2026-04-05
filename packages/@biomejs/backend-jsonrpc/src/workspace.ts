@@ -1018,7 +1018,7 @@ Can be either a plain path string or an object with path and options:
 	 */
 export type PluginConfiguration = string | PluginWithOptions;
 export type VcsClientKind = "git";
-export type PresetConfig = "all" | "none" | { fromAnalyzer: RulePreset };
+export type PresetConfig = "All" | "None" | { FromAnalyzer: RulePreset };
 /**
  * A list of rules that belong to this group
  */
