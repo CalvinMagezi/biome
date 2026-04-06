@@ -1018,7 +1018,10 @@ Can be either a plain path string or an object with path and options:
 	 */
 export type PluginConfiguration = string | PluginWithOptions;
 export type VcsClientKind = "git";
-export type PresetConfig = "All" | "None" | { FromAnalyzer: RulePreset };
+/**
+ * A preset configuration for enabling a set of rules.
+ */
+export type PresetConfig = "recommended" | "all" | "none";
 /**
  * A list of rules that belong to this group
  */
@@ -1256,10 +1259,6 @@ these patterns. Use negated globs (e.g., `!**/*.test.ts`) for exclusions.
 	 */
 	path: string;
 }
-/**
- * The set of rules that will be executed by the linter.
- */
-export type RulePreset = "recommended";
 export type NoDuplicateClassesConfiguration =
 	| RuleAssistPlainConfiguration
 	| RuleAssistWithNoDuplicateClassesOptions;
