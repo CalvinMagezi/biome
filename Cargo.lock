@@ -249,7 +249,6 @@ dependencies = [
  "biome_deserialize",
  "biome_deserialize_macros",
  "biome_diagnostics",
- "biome_flags",
  "biome_formatter",
  "biome_glob",
  "biome_html_formatter",
