@@ -2426,6 +2426,11 @@ See https://biomejs.dev/linter/rules/use-disposables
 	 */
 	useDisposables?: UseDisposablesConfiguration;
 	/**
+	* Prefer .textContent over .innerText for DOM node text.
+See https://biomejs.dev/linter/rules/use-dom-node-text-content 
+	 */
+	useDomNodeTextContent?: UseDomNodeTextContentConfiguration;
+	/**
 	* Enforce that new Error() is thrown with the original error as cause.
 See https://biomejs.dev/linter/rules/use-error-cause 
 	 */
@@ -4369,6 +4374,9 @@ export type UseDestructuringConfiguration =
 export type UseDisposablesConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseDisposablesOptions;
+export type UseDomNodeTextContentConfiguration =
+	| RulePlainConfiguration
+	| RuleWithUseDomNodeTextContentOptions;
 export type UseErrorCauseConfiguration =
 	| RulePlainConfiguration
 	| RuleWithUseErrorCauseOptions;
@@ -6135,6 +6143,11 @@ export interface RuleWithUseDisposablesOptions {
 	level: RulePlainConfiguration;
 	options?: UseDisposablesOptions;
 }
+export interface RuleWithUseDomNodeTextContentOptions {
+	fix?: FixKind;
+	level: RulePlainConfiguration;
+	options?: UseDomNodeTextContentOptions;
+}
 export interface RuleWithUseErrorCauseOptions {
 	level: RulePlainConfiguration;
 	options?: UseErrorCauseOptions;
@@ -7721,6 +7734,7 @@ Default: `"it"`
 }
 export type UseDestructuringOptions = {};
 export type UseDisposablesOptions = {};
+export type UseDomNodeTextContentOptions = {};
 /**
  * Options for the `useErrorCause` rule.
  */
@@ -8723,8 +8737,8 @@ export type Category =
 	| "lint/nursery/noInlineStyles"
 	| "lint/nursery/noJsxPropsBind"
 	| "lint/nursery/noLeakedRender"
-	| "lint/nursery/noMissingGenericFamilyKeyword"
 	| "lint/nursery/noMisleadingReturnType"
+	| "lint/nursery/noMissingGenericFamilyKeyword"
 	| "lint/nursery/noMisusedPromises"
 	| "lint/nursery/noMultiAssign"
 	| "lint/nursery/noMultiStr"
@@ -8774,6 +8788,7 @@ export type Category =
 	| "lint/nursery/useConsistentTestIt"
 	| "lint/nursery/useDestructuring"
 	| "lint/nursery/useDisposables"
+	| "lint/nursery/useDomNodeTextContent"
 	| "lint/nursery/useErrorCause"
 	| "lint/nursery/useExhaustiveSwitchCases"
 	| "lint/nursery/useExpect"
