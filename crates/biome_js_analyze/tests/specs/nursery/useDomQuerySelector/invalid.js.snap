@@ -1,0 +1,401 @@
+---
+source: crates/biome_js_analyze/tests/spec_tests.rs
+expression: invalid.js
+---
+# Input
+```js
+/* should generate diagnostics */
+document.getElementById("foo");
+document.getElementsByClassName("foo");
+document.getElementsByClassName("foo bar");
+document.getElementsByTagName("main");
+document.getElementsByName("email");
+document.getElementById(`foo`);
+document.getElementsByClassName(`foo bar`);
+document.getElementsByName(`email`);
+document.getElementById(null);
+window.document.getElementById("foo");
+globalThis.document.getElementsByClassName("foo");
+
+const doc = document;
+doc.getElementById("foo");
+
+const globalDoc = window.document;
+globalDoc["getElementById"]("foo");
+
+document.getElementsByClassName(fn());
+
+```
+
+# Diagnostics
+```
+invalid.js:2:10 lint/nursery/useDomQuerySelector ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+    1 │ /* should generate diagnostics */
+  > 2 │ document.getElementById("foo");
+      │          ^^^^^^^^^^^^^^
+    3 │ document.getElementsByClassName("foo");
+    4 │ document.getElementsByClassName("foo bar");
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+
+```
+
+```
+invalid.js:3:10 lint/nursery/useDomQuerySelector  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+    1 │ /* should generate diagnostics */
+    2 │ document.getElementById("foo");
+  > 3 │ document.getElementsByClassName("foo");
+      │          ^^^^^^^^^^^^^^^^^^^^^^
+    4 │ document.getElementsByClassName("foo bar");
+    5 │ document.getElementsByTagName("main");
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Use .querySelectorAll() instead.
+  
+     1  1 │   /* should generate diagnostics */
+     2  2 │   document.getElementById("foo");
+     3    │ - document.getElementsByClassName("foo");
+        3 │ + document.querySelectorAll(".foo");
+     4  4 │   document.getElementsByClassName("foo bar");
+     5  5 │   document.getElementsByTagName("main");
+  
+
+```
+
+```
+invalid.js:4:10 lint/nursery/useDomQuerySelector  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+    2 │ document.getElementById("foo");
+    3 │ document.getElementsByClassName("foo");
+  > 4 │ document.getElementsByClassName("foo bar");
+      │          ^^^^^^^^^^^^^^^^^^^^^^
+    5 │ document.getElementsByTagName("main");
+    6 │ document.getElementsByName("email");
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Use .querySelectorAll() instead.
+  
+     2  2 │   document.getElementById("foo");
+     3  3 │   document.getElementsByClassName("foo");
+     4    │ - document.getElementsByClassName("foo·bar");
+        4 │ + document.querySelectorAll(".foo.bar");
+     5  5 │   document.getElementsByTagName("main");
+     6  6 │   document.getElementsByName("email");
+  
+
+```
+
+```
+invalid.js:5:10 lint/nursery/useDomQuerySelector  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+    3 │ document.getElementsByClassName("foo");
+    4 │ document.getElementsByClassName("foo bar");
+  > 5 │ document.getElementsByTagName("main");
+      │          ^^^^^^^^^^^^^^^^^^^^
+    6 │ document.getElementsByName("email");
+    7 │ document.getElementById(`foo`);
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Use .querySelectorAll() instead.
+  
+     3  3 │   document.getElementsByClassName("foo");
+     4  4 │   document.getElementsByClassName("foo bar");
+     5    │ - document.getElementsByTagName("main");
+        5 │ + document.querySelectorAll("main");
+     6  6 │   document.getElementsByName("email");
+     7  7 │   document.getElementById(`foo`);
+  
+
+```
+
+```
+invalid.js:6:10 lint/nursery/useDomQuerySelector  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+    4 │ document.getElementsByClassName("foo bar");
+    5 │ document.getElementsByTagName("main");
+  > 6 │ document.getElementsByName("email");
+      │          ^^^^^^^^^^^^^^^^^
+    7 │ document.getElementById(`foo`);
+    8 │ document.getElementsByClassName(`foo bar`);
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Use .querySelectorAll() instead.
+  
+     4  4 │   document.getElementsByClassName("foo bar");
+     5  5 │   document.getElementsByTagName("main");
+     6    │ - document.getElementsByName("email");
+        6 │ + document.querySelectorAll("[name='email']");
+     7  7 │   document.getElementById(`foo`);
+     8  8 │   document.getElementsByClassName(`foo bar`);
+  
+
+```
+
+```
+invalid.js:7:10 lint/nursery/useDomQuerySelector  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+    5 │ document.getElementsByTagName("main");
+    6 │ document.getElementsByName("email");
+  > 7 │ document.getElementById(`foo`);
+      │          ^^^^^^^^^^^^^^
+    8 │ document.getElementsByClassName(`foo bar`);
+    9 │ document.getElementsByName(`email`);
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Use .querySelector() instead.
+  
+     5  5 │   document.getElementsByTagName("main");
+     6  6 │   document.getElementsByName("email");
+     7    │ - document.getElementById(`foo`);
+        7 │ + document.querySelector(`#foo`);
+     8  8 │   document.getElementsByClassName(`foo bar`);
+     9  9 │   document.getElementsByName(`email`);
+  
+
+```
+
+```
+invalid.js:8:10 lint/nursery/useDomQuerySelector  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+     6 │ document.getElementsByName("email");
+     7 │ document.getElementById(`foo`);
+   > 8 │ document.getElementsByClassName(`foo bar`);
+       │          ^^^^^^^^^^^^^^^^^^^^^^
+     9 │ document.getElementsByName(`email`);
+    10 │ document.getElementById(null);
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Use .querySelectorAll() instead.
+  
+     6  6 │   document.getElementsByName("email");
+     7  7 │   document.getElementById(`foo`);
+     8    │ - document.getElementsByClassName(`foo·bar`);
+        8 │ + document.querySelectorAll(`.foo.bar`);
+     9  9 │   document.getElementsByName(`email`);
+    10 10 │   document.getElementById(null);
+  
+
+```
+
+```
+invalid.js:9:10 lint/nursery/useDomQuerySelector  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+     7 │ document.getElementById(`foo`);
+     8 │ document.getElementsByClassName(`foo bar`);
+   > 9 │ document.getElementsByName(`email`);
+       │          ^^^^^^^^^^^^^^^^^
+    10 │ document.getElementById(null);
+    11 │ window.document.getElementById("foo");
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Use .querySelectorAll() instead.
+  
+     7  7 │   document.getElementById(`foo`);
+     8  8 │   document.getElementsByClassName(`foo bar`);
+     9    │ - document.getElementsByName(`email`);
+        9 │ + document.querySelectorAll(`[name='email']`);
+    10 10 │   document.getElementById(null);
+    11 11 │   window.document.getElementById("foo");
+  
+
+```
+
+```
+invalid.js:10:10 lint/nursery/useDomQuerySelector  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+     8 │ document.getElementsByClassName(`foo bar`);
+     9 │ document.getElementsByName(`email`);
+  > 10 │ document.getElementById(null);
+       │          ^^^^^^^^^^^^^^
+    11 │ window.document.getElementById("foo");
+    12 │ globalThis.document.getElementsByClassName("foo");
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Use .querySelector() instead.
+  
+     8  8 │   document.getElementsByClassName(`foo bar`);
+     9  9 │   document.getElementsByName(`email`);
+    10    │ - document.getElementById(null);
+       10 │ + document.querySelector(null);
+    11 11 │   window.document.getElementById("foo");
+    12 12 │   globalThis.document.getElementsByClassName("foo");
+  
+
+```
+
+```
+invalid.js:11:17 lint/nursery/useDomQuerySelector  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+     9 │ document.getElementsByName(`email`);
+    10 │ document.getElementById(null);
+  > 11 │ window.document.getElementById("foo");
+       │                 ^^^^^^^^^^^^^^
+    12 │ globalThis.document.getElementsByClassName("foo");
+    13 │ 
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Use .querySelector() instead.
+  
+     9  9 │   document.getElementsByName(`email`);
+    10 10 │   document.getElementById(null);
+    11    │ - window.document.getElementById("foo");
+       11 │ + window.document.querySelector("#foo");
+    12 12 │   globalThis.document.getElementsByClassName("foo");
+    13 13 │   
+  
+
+```
+
+```
+invalid.js:12:21 lint/nursery/useDomQuerySelector  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+    10 │ document.getElementById(null);
+    11 │ window.document.getElementById("foo");
+  > 12 │ globalThis.document.getElementsByClassName("foo");
+       │                     ^^^^^^^^^^^^^^^^^^^^^^
+    13 │ 
+    14 │ const doc = document;
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Use .querySelectorAll() instead.
+  
+    10 10 │   document.getElementById(null);
+    11 11 │   window.document.getElementById("foo");
+    12    │ - globalThis.document.getElementsByClassName("foo");
+       12 │ + globalThis.document.querySelectorAll(".foo");
+    13 13 │   
+    14 14 │   const doc = document;
+  
+
+```
+
+```
+invalid.js:15:5 lint/nursery/useDomQuerySelector  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+    14 │ const doc = document;
+  > 15 │ doc.getElementById("foo");
+       │     ^^^^^^^^^^^^^^
+    16 │ 
+    17 │ const globalDoc = window.document;
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Use .querySelector() instead.
+  
+    13 13 │   
+    14 14 │   const doc = document;
+    15    │ - doc.getElementById("foo");
+       15 │ + doc.querySelector("#foo");
+    16 16 │   
+    17 17 │   const globalDoc = window.document;
+  
+
+```
+
+```
+invalid.js:18:11 lint/nursery/useDomQuerySelector  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+    17 │ const globalDoc = window.document;
+  > 18 │ globalDoc["getElementById"]("foo");
+       │           ^^^^^^^^^^^^^^^^
+    19 │ 
+    20 │ document.getElementsByClassName(fn());
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Use .querySelector() instead.
+  
+    16 16 │   
+    17 17 │   const globalDoc = window.document;
+    18    │ - globalDoc["getElementById"]("foo");
+       18 │ + globalDoc["querySelector"]("#foo");
+    19 19 │   
+    20 20 │   document.getElementsByClassName(fn());
+  
+
+```
+
+```
+invalid.js:20:10 lint/nursery/useDomQuerySelector ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i This DOM query uses an older DOM query API.
+  
+    18 │ globalDoc["getElementById"]("foo");
+    19 │ 
+  > 20 │ document.getElementsByClassName(fn());
+       │          ^^^^^^^^^^^^^^^^^^^^^^
+    21 │ 
+  
+  i Using the same DOM query APIs consistently makes DOM lookups easier to read and easier to refine with more specific selectors.
+  
+  i Use querySelector() or querySelectorAll() instead.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+
+```
