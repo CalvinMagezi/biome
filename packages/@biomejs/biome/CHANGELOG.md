@@ -1,5 +1,51 @@
 # @biomejs/biome
 
+## 2.4.12
+
+### Patch Changes
+
+- [#9889](https://github.com/biomejs/biome/pull/9889) [`7ae83f2`](https://github.com/biomejs/biome/commit/7ae83f2f60dc83eae6ef72e4cb1d6f06f3a882de) Thanks [@dyc3](https://github.com/dyc3)! - Improved the diagnostics for [`useForOf`](https://biomejs.dev/linter/rules/use-for-of/) to better explain the problem, why it matters, and how to fix it.
+
+- [#9891](https://github.com/biomejs/biome/pull/9891) [`4d9ac51`](https://github.com/biomejs/biome/commit/4d9ac51352482d72d3438f2d514dbeef0edc63e0) Thanks [@dyc3](https://github.com/dyc3)! - Improved the `noGlobalObjectCalls` diagnostic to better explain why calling global objects like `Math` or `JSON` is invalid and how to fix it.
+
+- [#9902](https://github.com/biomejs/biome/pull/9902) [`3f4d103`](https://github.com/biomejs/biome/commit/3f4d1033f7f672be2adba11bb8b7de5d8d3532fc) Thanks [@ematipico](https://github.com/ematipico)! - Fixed [#9901](https://github.com/biomejs/biome/issues/9901): the command `lint --write` is now idempotent when it's run against HTML-ish files that contains scripts and styles.
+
+- [#9891](https://github.com/biomejs/biome/pull/9891) [`4d9ac51`](https://github.com/biomejs/biome/commit/4d9ac51352482d72d3438f2d514dbeef0edc63e0) Thanks [@dyc3](https://github.com/dyc3)! - Improved the `noMultiStr` diagnostic to explain why escaped multiline strings are discouraged and what to use instead.
+
+- [#9892](https://github.com/biomejs/biome/pull/9892) [`e75d70e`](https://github.com/biomejs/biome/commit/e75d70ef48297604b9371db5c281f6ef6a8d2a38) Thanks [@dyc3](https://github.com/dyc3)! - Improved the `noSelfCompare` diagnostic to better explain why comparing a value to itself is suspicious and what to use for NaN checks.
+
+- [#9892](https://github.com/biomejs/biome/pull/9892) [`e75d70e`](https://github.com/biomejs/biome/commit/e75d70ef48297604b9371db5c281f6ef6a8d2a38) Thanks [@dyc3](https://github.com/dyc3)! - Improved the `noThenProperty` diagnostic to better explain why exposing `then` can create thenable behavior and how to avoid it.
+
+- [#9892](https://github.com/biomejs/biome/pull/9892) [`e75d70e`](https://github.com/biomejs/biome/commit/e75d70ef48297604b9371db5c281f6ef6a8d2a38) Thanks [@dyc3](https://github.com/dyc3)! - Improved the `noShorthandPropertyOverrides` diagnostic to explain why later shorthand declarations can unintentionally overwrite earlier longhand properties.
+
+- [#9892](https://github.com/biomejs/biome/pull/9892) [`e75d70e`](https://github.com/biomejs/biome/commit/e75d70ef48297604b9371db5c281f6ef6a8d2a38) Thanks [@dyc3](https://github.com/dyc3)! - Improved the `noRootType` diagnostic to better explain that the reported root type is disallowed by project configuration and how to proceed.
+
+- [#9888](https://github.com/biomejs/biome/pull/9888) [`362b638`](https://github.com/biomejs/biome/commit/362b638b99d09c09456943668c7627a81c40b644) Thanks [@dyc3](https://github.com/dyc3)! - Updated metadata for `biome migrate eslint` to better reflect which ESLint rules are redundant versus unsupported versus unimplemented.
+
+- [#9892](https://github.com/biomejs/biome/pull/9892) [`e75d70e`](https://github.com/biomejs/biome/commit/e75d70ef48297604b9371db5c281f6ef6a8d2a38) Thanks [@dyc3](https://github.com/dyc3)! - Improved the `noAutofocus` diagnostic to better explain why autofocus harms accessibility outside allowed modal contexts.
+
+- [#9889](https://github.com/biomejs/biome/pull/9889) [`7ae83f2`](https://github.com/biomejs/biome/commit/7ae83f2f60dc83eae6ef72e4cb1d6f06f3a882de) Thanks [@dyc3](https://github.com/dyc3)! - Improved the diagnostics for [`noConstantCondition`](https://biomejs.dev/linter/rules/no-constant-condition/) to better explain the problem, why it matters, and how to fix it.
+
+- [#9866](https://github.com/biomejs/biome/pull/9866) [`40bd180`](https://github.com/biomejs/biome/commit/40bd18090895046c34105c4d5671f7c27461e18a) Thanks [@dyc3](https://github.com/dyc3)! - Added a new nursery rule [`noExcessiveSelectorClasses`](https://biomejs.dev/linter/rules/no-excessive-selector-classes/), which limits how many class selectors can appear in a single CSS selector.
+
+- [#9904](https://github.com/biomejs/biome/pull/9904) [`e7775a5`](https://github.com/biomejs/biome/commit/e7775a5c7f26bc808302e6646a1ffd702ec59fce) Thanks [@ematipico](https://github.com/ematipico)! - Fixed [#9626](https://github.com/biomejs/biome/issues/9626): [`noUnresolvedImports`](https://biomejs.dev/linter/rules/no-unresolved-imports/) no longer reports false positives for named imports from packages that have a corresponding `@types/*` package installed. For example, `import { useState } from "react"` with `@types/react` installed is now correctly recognised.
+
+- [#9577](https://github.com/biomejs/biome/pull/9577) [`c499f46`](https://github.com/biomejs/biome/commit/c499f4609912b76fb5a7071a9e9c6a35bb26827a) Thanks [@tt-a1i](https://github.com/tt-a1i)! - Added the nursery rule [`useReduceTypeParameter`](https://biomejs.dev/linter/rules/use-reduce-type-parameter/). It flags type assertions on the initial value passed to `Array#reduce` and `Array#reduceRight` and recommends using a type parameter instead.
+
+  ```ts
+  // before: type assertion on initial value
+  arr.reduce((sum, num) => sum + num, [] as number[]);
+
+  // after: type parameter on the call
+  arr.reduce<number[]>((sum, num) => sum + num, []);
+  ```
+
+- [#9895](https://github.com/biomejs/biome/pull/9895) [`1c8e1ef`](https://github.com/biomejs/biome/commit/1c8e1ef86882faabe4a461d29ab8643c18bfa83f) Thanks [@Netail](https://github.com/Netail)! - Added extra rule sources from react-xyz. `biome migrate eslint` should do a bit better detecting rules in your eslint configurations.
+
+- [#9891](https://github.com/biomejs/biome/pull/9891) [`4d9ac51`](https://github.com/biomejs/biome/commit/4d9ac51352482d72d3438f2d514dbeef0edc63e0) Thanks [@dyc3](https://github.com/dyc3)! - Improved the `noInvalidUseBeforeDeclaration` diagnostic to better explain why using a declaration too early is problematic and how to fix it.
+
+- [#9889](https://github.com/biomejs/biome/pull/9889) [`7ae83f2`](https://github.com/biomejs/biome/commit/7ae83f2f60dc83eae6ef72e4cb1d6f06f3a882de) Thanks [@dyc3](https://github.com/dyc3)! - Improved the diagnostics for [`noRedeclare`](https://biomejs.dev/linter/rules/no-redeclare/) to better explain the problem, why it matters, and how to fix it.
+
 ## 2.4.11
 
 ### Patch Changes
